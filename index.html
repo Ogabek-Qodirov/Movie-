@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="https://cdn4.iconfinder.com/data/icons/new-google-logo-2015/400/new-google-favicon-512.png" type="image/x-icon">
+    <title>Movie</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #141414;
+            color: white;
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.9);
+            padding: 1rem 2rem;
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .logo {
+            color: #e50914;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .main-content {
+            padding-top: 70px;
+        }
+
+        .featured {
+            height: 70vh;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)),
+                        url('image-1200x600.jpg');
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        .featured-content {
+            max-width: 600px;
+        }
+
+        .featured h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .play-btn {
+            background: #e50914;
+            color: white;
+            padding: 0.8rem 2rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+
+        .categories {
+            padding: 2rem;
+        }
+
+        .category {
+            margin-bottom: 2rem;
+        }
+
+        .category h2 {
+            margin-bottom: 1rem;
+        }
+
+        .movie-row {
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .movie-card {
+            flex: 0 0 200px;
+            cursor: pointer;
+            transition: transform 0.3s;
+            position: relative;
+        }
+
+        .movie-card:hover {
+            transform: scale(1.1);
+        }
+
+        .movie-card img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+
+        .movie-info {
+            padding: 0.5rem;
+        }
+
+        /* Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            z-index: 2000;
+        }
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 800px;
+            margin: 5% auto;
+            background: #181818;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            color: white;
+            font-size: 30px;
+            cursor: pointer;
+        }
+
+        .video-container {
+            position: relative;
+            padding-bottom: 56.25%;
+            margin-bottom: 20px;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        @media (max-width: 768px) {
+            .featured h1 {
+                font-size: 2rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-content">
+            <div class="logo">Movie</div>
+            <div class="nav-links">
+                <a href="#home">Home</a>
+                <a href="#movies">Movies</a>
+                <a href="#series">Series</a>
+                <a href="#mylist">My List</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="main-content">
+        <div class="featured">
+            <div class="featured-content">
+                <h1>Inception</h1>
+                <p>A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.</p>
+                <button class="play-btn" onclick="playMovie('Inception')">Play Movie</button>
+                <img src="" alt="">
+            </div>
+        </div>
+
+        <div class="categories">
+            <div class="category">
+                <h2>Trending Now</h2>
+                <div class="movie-row" id="trending">
+                    <!-- Movies will be added here by JavaScript -->
+                </div>
+            </div>
+
+            <div class="category">
+                <h2>Popular Movies</h2>
+                <div class="movie-row" id="popular">
+                    <!-- Movies will be added here by JavaScript -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="movieModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        // Movie data
+        const movies = [
+            {
+                title: "Inception",
+                genre: "Sci-Fi",
+                year: 2010,
+                trailerUrl: "https://rezka.ag/films/action/770-nachalo-2010.html",
+                image: "Inception.jpeg"
+            },
+            {
+                title: "The Dark Knight",
+                genre: "Action",
+                year: 2008,
+                trailerUrl: "https://rezka.ag/films/action/703-temnyy-rycar-2008.html",
+                image: "The Dark Knight.jpg"
+            },
+            {
+                title: "Interstellar",
+                genre: "Sci-Fi",
+                year: 2014,
+                trailerUrl: "https://rezka.ag/films/fiction/2259-interstellar-2014.html",
+                image: "Interstellar.jpeg"
+            },
+            {
+                title: "The Matrix",
+                genre: "Sci-Fi",
+                year: 1999,
+                trailerUrl: "https://rezka.ag/films/fiction/981-matrica-1999.html",
+                image: "The Matrix.jpg"
+            }
+        ];
+
+        // Populate movie rows
+        function populateMovies() {
+            const trendingRow = document.getElementById('trending');
+            const popularRow = document.getElementById('popular');
+
+            movies.forEach(movie => {
+                const movieCard = createMovieCard(movie);
+                trendingRow.appendChild(movieCard.cloneNode(true));
+                popularRow.appendChild(movieCard);
+            });
+        }
+
+        // Create movie card
+        function createMovieCard(movie) {
+            const card = document.createElement('div');
+            card.className = 'movie-card';
+            card.innerHTML = `
+                <img src="${movie.image}" alt="${movie.title}">
+                <div class="movie-info">
+                    <h3>${movie.title}</h3>
+                    <p>${movie.year} • ${movie.genre}</p>
+                </div>
+            `;
+            card.onclick = () => playMovie(movie.title);
+            return card;
+        }
+
+        // Play movie (show trailer)
+        function playMovie(title) {
+            const movie = movies.find(m => m.title === title);
+            const modal = document.getElementById('movieModal');
+            const modalContent = document.getElementById('modalContent');
+
+            modalContent.innerHTML = `
+                <div class="video-container">
+                    <iframe src="${movie.trailerUrl}" 
+                            frameborder="0" 
+                            allowfullscreen>
+                    </iframe>
+                </div>
+                <h2>${movie.title}</h2>
+                <p>${movie.year} • ${movie.genre}</p>
+            `;
+
+            modal.style.display = 'block';
+        }
+
+        // Close modal
+        function closeModal() {
+            const modal = document.getElementById('movieModal');
+            const modalContent = document.getElementById('modalContent');
+            modal.style.display = 'none';
+            modalContent.innerHTML = ''; // Stop video playback
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('movieModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize
+        populateMovies();
+    </script>
+</body>
+</html>
